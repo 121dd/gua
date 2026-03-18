@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>进阶算卦</title>
+<style>
+body { font-family: Arial; text-align: center; padding: 30px; }
+button { padding: 12px 24px; font-size: 16px; }
+.card { margin-top:20px; padding:15px; border:1px solid #ccc; border-radius:10px;}
+</style>
+</head>
+
+<body>
+
+<h2>梅花易数（进阶版）</h2>
+<button onclick="calc()">点击起卦</button>
+
+<div id="result" class="card"></div>
+
+<script>
+
+const trigrams = ['乾','兑','离','震','巽','坎','艮','坤'];
+
+const trigram_meaning = [
+    "刚健、主动", "喜悦、人际", "依附、变化", "行动、冲动",
+    "渗透、影响", "危险、隐藏", "停止、阻碍", "包容、顺从"
+];
+
+const trigram_bin = [
+    [1,1,1],[1,1,0],[1,0,1],[1,0,0],
+    [0,1,1],[0,1,0],[0,0,1],[0,0,0]
+];
+
+const yao_meaning = [
+    "初期阶段，事情刚开始",
+    "内部发展，逐渐成形",
+    "转折阶段，容易变化",
+    "外部因素介入",
+    "核心阶段，关键决策",
+    "结果阶段，走向结局"
+];
+
+function calc() {
+
+    let x1 = Math.floor(Math.random()*100)+1;
+    let x2 = Math.floor(Math.random()*100)+1;
+
+    let upper_idx = (x1-1)%8;
+    let lower_idx = (x2-1)%8;
+
+    let upper = trigram_bin[upper_idx];
+    let lower = trigram_bin[lower_idx];
+
+    let hexagram = upper.concat(lower);
+
+    let moving = (x1 + x2 -1)%6;
+
+    // 变卦
+    let changed = [...hexagram];
+    changed[moving] = 1 - changed[moving];
+
+    let yang = hexagram.reduce((a,b)=>a+b,0);
+
+    let trend = (yang >=4) ? "整体偏主动（进取）" : "整体偏保守（稳定）";
+
+    // 上下卦分析
+    let upper_text = trigram_meaning[upper_idx];
+    let lower_text = trigram_meaning[lower_idx];
+
+    // 动爻解释
+    let yao_text = yao_meaning[moving];
+
+    document.getElementById("result").innerHTML =
+        `<b>本卦</b><br>
+         上卦：${trigrams[upper_idx]}（${upper_text}）<br>
+         下卦：${trigrams[lower_idx]}（${lower_text}）<br><br>
+
+         <b>动爻</b><br>
+         第 ${moving+1} 爻：${yao_text}<br><br>
+
+         <b>整体趋势</b><br>
+         ${trend}<br><br>
+
+         <b>解读</b><br>
+         当前状态受「${trigrams[lower_idx]}」影响，表现为 ${lower_text}；<br>
+         外部环境呈现「${trigrams[upper_idx]}」，体现 ${upper_text}；<br>
+         关键变化发生在第 ${moving+1} 阶段，意味着：${yao_text}。`;
+}
+
+</script>
+
+</body>
+</html>
